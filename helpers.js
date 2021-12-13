@@ -1,5 +1,16 @@
-const users = {};
-const urlDatabase = {};
+const bcrypt = require('bcryptjs');
+const users = {
+    "michel": {
+      id: "michel",
+      email: "michel_motongi@hotmail.com",
+      hashedPassword: bcrypt.hashSync("123", 10)
+    }
+};
+
+const urlDatabase = {
+    b6UTxQ: { longURL: "https://www.example.com", userID: "aJ48lW" },
+    i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
+};
 
 function generateRandomString() {
   let string = '';
@@ -18,19 +29,24 @@ function emailExist(email,users) {
     }
   }
 }
-function getUserByEmail(email,users) {
-  for (let item in users) {
-    if (users[item].email === email) {
-      return users[item].id;
-    }
-  }
-}
 
-function urlForUser(id, urlDatabase) {
+function validateLogin(database){
+    let email = database.email;
+    let password = database.password;
+    for(let key in users) {
+      let user = users[key];
+      if (user.email === email && bcrypt.hashSync(password, user.hashedPassword)) {
+        return user;
+      }
+    }
+    return false;
+};
+
+function urlForUser(id, database) {
   let userData = {};
-  for (let item in urlDatabase) {
-    if (urlDatabase[item].userID === id) {
-      userData[item] = urlDatabase[item];
+  for (let item in database) {
+    if (database[item].userID === id) {
+      userData[item] = database[item];
     }
   }
   return userData;
@@ -43,15 +59,11 @@ function getUserById(id, users) {
   return null;
 }
 
-function updateUrl(shortUrl, longUrl) {
-  urlDatabase[shortUrl].longURL = longUrl;
-}
 
 module.exports = {
-  getUserByEmail,
   urlForUser,
   generateRandomString,
   getUserById,
   emailExist,
-  updateUrl
+  validateLogin
 };
