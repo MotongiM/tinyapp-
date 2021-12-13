@@ -4,13 +4,13 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Urls login. "](frontpage.PNG)
+!["Urls login. "](https://github.com/MotongiM/tinyapp-/blob/master/docs/login.PNG)
 
-!["Urls index"](login.png)
+!["Urls index"](https://github.com/MotongiM/tinyapp-/blob/master/docs/Urls_index.png)
 
-!["Create New link"](added_lin.png)
+!["Create New link"](https://github.com/MotongiM/tinyapp-/blob/master/docs/create_Urls.png)
 
-!["Urls index with link"](added_link.png)
+!["Urls index with link"](https://github.com/MotongiM/tinyapp-/blob/master/docs/Urls_index_link.png)
 
 ## Dependencies
 
