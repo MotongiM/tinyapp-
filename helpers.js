@@ -1,16 +1,4 @@
 const bcrypt = require('bcryptjs');
-const users = {
-    "michel": {
-      id: "michel",
-      email: "michel_motongi@hotmail.com",
-      hashedPassword: bcrypt.hashSync("123", 10)
-    }
-};
-
-const urlDatabase = {
-    b6UTxQ: { longURL: "https://www.example.com", userID: "aJ48lW" },
-    i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" },
-};
 
 function generateRandomString() {
   let string = '';
