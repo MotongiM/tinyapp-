@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-
 function generateRandomString() {
   let string = '';
   let char = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -10,48 +9,53 @@ function generateRandomString() {
   return string;
 }
 
-function emailExist(email,users) {
-  for (let item in users) {
-    if (users[item].email === email) {
-      return true;
-    }
-  }
-}
+function newUser(email, password, database) {
 
-function validateLogin(database){
-    let email = database.email;
-    let password = database.password;
-    for(let key in users) {
-      let user = users[key];
-      if (user.email === email && bcrypt.hashSync(password, user.hashedPassword)) {
-        return user;
-      }
-    }
-    return false;
+  const userId = generateRandomString();
+  
+  const newUserObj = {
+    id: userId,
+    email,
+    password : bcrypt.hashSync(password, 10)
+  };
+  database[userId] = newUserObj;
+  return userId;
+  
 };
 
-function urlForUser(id, database) {
+function urlsForUser(database, id) {
   let userData = {};
-  for (let item in database) {
-    if (database[item].userID === id) {
-      userData[item] = database[item];
+  for (let url in database) {
+    if (id === database[url].userID ) {
+      userData[url] = database[url];
     }
   }
   return userData;
-}
-function getUserById(id, users) {
-  const user = users[id];
-  if (user) {
-    return user;
-  }
-  return null;
+};
+
+
+function getUserByEmail(email,users) {
+  for( let userId in users) {
+    if ( users[userId].email === email) {
+    return users[userId];
+    }
+  } return undefined;
+
 }
 
+const uniqueUser = (email, password, users) => {
+  const user = getUserByEmail(email, users);
+  if (user && bcrypt.compareSync(password, user.password)) {
+    return user;
+  } else {
+    return false;
+  }
+};
 
 module.exports = {
-  urlForUser,
+  urlsForUser,
   generateRandomString,
-  getUserById,
-  emailExist,
-  validateLogin
+  newUser,
+  getUserByEmail,
+  uniqueUser
 };
