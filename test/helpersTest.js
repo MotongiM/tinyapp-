@@ -19,8 +19,12 @@ const testUsers = {
 describe('getUserByEmail', function() {
   it('should return a user with valid email', () => {
     const user = getUserByEmail("user@example.com", testUsers)
-    const expectedUserID = "userRandomID";
-      assert.equal(user, expectedUserID);
+    const expectedOutput = {
+      id: "userRandomID",
+      email: "user@example.com",
+      password: "purple-monkey-dinosaur"
+    };
+      assert.deepEqual(user, expectedOutput);
   });
   
     it('should return undefined if email not in database', function() {
