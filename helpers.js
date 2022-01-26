@@ -37,7 +37,7 @@ function urlsForUser(database, id) {
 function getUserByEmail(email,users) {
   for ( let userId in users) {
     if ( users[userId].email === email) {
-      return userId;
+      return users[userId];
     }
   } 
   return undefined;
