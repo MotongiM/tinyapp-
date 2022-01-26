@@ -26,6 +26,8 @@ const urlDatabase = {
   }
 };
 
+
+//DataBase
 const usersDb = { 
   "userRandomID": {
     id: "userRandomID", 
@@ -55,6 +57,8 @@ app.get('/urls', (req,res) => {
   res.render('urls_index', templateVars);
 });
 
+
+// Redirect if not a user or Show new URL
 app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.status(401).send('Please login to create new URLs');
@@ -67,6 +71,7 @@ app.post("/urls", (req, res) => {
   }
 });
 
+//Create new URL
 app.get("/urls/new", (req, res) => {
   const userID = req.session.user_id;
   const templateVars = {
@@ -80,7 +85,7 @@ app.get("/urls/new", (req, res) => {
   }
 });
 
-
+// Short url with edit option
 app.get('/urls/:shortURL', (req, res) => {
   const shortURL = req.params.shortURL;
   const templateVars = { urls: urlDatabase, shortURL, longURL: urlDatabase[shortURL].longURL, user: usersDb[req.session.user_id] };
@@ -92,22 +97,19 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 
-
-app.post("/urls/:shortURL", (req, res) => {
-  if (!urlDatabase[req.params.shortURL]) {
-    res.redirect('/urls');
-    return;
+//Edit 
+app.post("/urls/:id", (req, res) => {
+  const shortURL = req.params.id;
+  const longURL = req.body.newURL;
+  const userID = req.session.user_id;
+  if (urlDatabase[shortURL].userID !== userID) {
+    return res.status(400).send("400: Denied");
   }
-  const loggeduserId = req.session["user_id"];
-  const isOwnerCreator = urlDatabase[req.params.shortURL].userID === loggeduserId;
-  if (!isOwnerCreator) {
-    res.status(400).send('Error: cannot edit another creator\'s URL');
-    return;
-  }
-  const shortURL = req.params.shortURL;
-  const updatedlongURL = req.body.newURL;
-  urlDatabase[shortURL].longURL = updatedlongURL;
-  res.redirect('/urls');
+  urlDatabase[shortURL] = {
+    longURL,
+    userID: req.session.user_id
+  };
+  res.redirect("/urls");
 });
 
 
@@ -126,11 +128,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 
+//Short url redirecting to longUrl
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id].longURL;
   res.redirect(longURL);
 });
 
+//Registering
 app.get("/register", (req, res) => {
   const templateVars = { user: usersDb[req.session.user_id] };
   if (templateVars.user) {
@@ -140,6 +144,7 @@ app.get("/register", (req, res) => {
   }
 });
 
+//Saving the user in a database
 app.post("/register" , (req, res) => {
   const userEmail = req.body.email;
   const password = req.body.password;
@@ -155,6 +160,8 @@ app.post("/register" , (req, res) => {
   }
 });
 
+
+//Login page
 app.get("/login", (req, res) => {
   const templateVars = { user: usersDb[req.session.user_id] };
   if (templateVars.user) {
@@ -164,6 +171,7 @@ app.get("/login", (req, res) => {
   }
 });
 
+//Login validation
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const user = uniqueUser(email, password, usersDb);
@@ -172,7 +180,7 @@ app.post("/login", (req, res) => {
     req.session["user_id"] = user.id;
     res.redirect("/urls");
   } else {
-    res.status(401).render('error_401');
+    res.status(401).send('error_401');
   }
 });
 
